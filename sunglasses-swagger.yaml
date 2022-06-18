@@ -1,0 +1,249 @@
+swagger: "2.0"
+info:
+  title: Sunglasses API
+  description: An API to support the sunglasses platform
+  version: 1.0.0
+host: localhost:3000
+schemes:
+  - https
+basePath: /api
+produces:
+  - application/json
+paths:
+  /brands:
+    get:
+      summary: Brands
+      description: |
+        The Brands endpoint returns all brands.
+      tags:
+        - Brands
+      responses:
+        "200":
+          description: An array of brands
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Brand"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+  /brands/{id}/products:
+    get:
+      summary: Products of a given brand
+      description: >-
+        This endpoint takes the id of a brand and returns all of it's corresponding products.
+      parameters:
+        - name: id
+          in: path
+          description: The id of a brand to find it's corresponding products
+          required: true
+          type: integer
+      tags:
+        - Brands
+      responses:
+        "200":
+          description: Profile information for a user
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Product"
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Brand not found"
+  /products:
+    get:
+      summary: Products
+      description: |
+        This endpoint returns all products. You can also filter using query parameters.
+      tags:
+        - Products
+      responses:
+        "200":
+          description: An array of products
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Product"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+  /login:
+    get:
+      tags:
+        - "User"
+      summary: "Logs user into the system"
+      description: ""
+      operationId: "loginUser"
+      produces:
+        - "application/json"
+        - "application/xml"
+      parameters:
+        - name: "username"
+          in: "query"
+          description: "The user name for login"
+          required: true
+          type: "string"
+        - name: "password"
+          in: "query"
+          description: "The password for login in clear text"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          headers:
+            X-Expires-After:
+              type: "string"
+              format: "date-time"
+              description: "date in UTC when token expires"
+            X-Rate-Limit:
+              type: "integer"
+              format: "int32"
+              description: "calls per hour allowed by the user"
+          schema:
+            type: "string"
+        400:
+          description: "Invalid username/password supplied"
+  /me/cart:
+    get:
+      summary: Get all Products in Cart
+      description: |
+        This endpoint allows get all products in the cart
+      tags:
+        - User
+      responses:
+        "200":
+          description: An array of products
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Product"
+        default:
+          description: Unexpected error
+          schema:
+            $ref: "#/definitions/Error"
+    post:
+      summary: Add Product to Cart
+      description: |
+        This endpoint allows you to add a product to the cart
+      tags:
+        - User
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "A product to add to the user's cart"
+          required: true
+          schema:
+            items:
+              $ref: "#/definitions/Product"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Product"
+        400:
+          description: "Invalid Product"
+  /me/cart/{productId}:
+    delete:
+      summary: Delete a Product in Cart
+      description: |
+        This endpoint allows you to delete a product in the cart
+      parameters:
+        - name: productId
+          in: path
+          description: The id of the goal to gift
+          required: true
+          type: integer
+      tags:
+        - User
+      responses:
+        "200":
+          description: Challenge is successful
+        400:
+          description: "Invalid ID supplied"
+    post:
+      summary: Change Quantity of Product in Cart
+      description: |
+        This endpoint allows you to change the quantity of a product in the cart
+      parameters:
+        - name: productId
+          in: path
+          description: The id of the product to change
+          required: true
+          type: integer
+        - name: quantity
+          in: query
+          description: The desired quantity of the given product
+          required: true
+          type: number
+      tags:
+        - User
+      responses:
+        200:
+          description: "Successful operation. Here's the current user with the updated cart."
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: invalid product id
+
+definitions:
+  Brand:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier for a goal.
+      products:
+        type: array
+        items:
+          $ref: "#/definitions/Product"
+        description: An array of products that belong to the brand.
+      description:
+        type: string
+        description: Description of the brand.
+      imageURL:
+        type: string
+        description: The URL for the image or logo representing the brand
+  Product:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Unique identifier for a product.
+      brand:
+        $ref: "#/definitions/Brand"
+      description:
+        type: string
+        description: Description of the product.
+      imageURL:
+        type: string
+        description: The URL for the image representing the product
+  User:
+    type: object
+    properties:
+      first_name:
+        type: string
+        description: First name of the Uber user.
+      last_name:
+        type: string
+        description: Last name of the Uber user.
+      email:
+        type: string
+        description: Email address of the Uber user
+      cart:
+        type: array
+        items:
+          $ref: "#/definitions/Product"
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
