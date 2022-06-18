@@ -194,8 +194,8 @@ definitions:
     type: object
     properties:
       id:
-        type: string
-        description: Unique identifier for a goal.
+        type: integer
+        description: Unique identifier for a brand.
       products:
         type: array
         items:
@@ -206,12 +206,12 @@ definitions:
         description: Description of the brand.
       imageURL:
         type: string
-        description: The URL for the image or logo representing the brand
+        description: The URL for the image or logo associated with the brand
   Product:
     type: object
     properties:
       id:
-        type: string
+        type: integer
         description: Unique identifier for a product.
       brand:
         $ref: "#/definitions/Brand"
@@ -224,6 +224,9 @@ definitions:
   User:
     type: object
     properties:
+      id:
+        type: integer
+        description: Unique identifer for a user.
       first_name:
         type: string
         description: First name of the Uber user.
@@ -233,6 +236,10 @@ definitions:
       email:
         type: string
         description: Email address of the Uber user
+      userStatus:
+        type: "integer"
+        format: "int32"
+        description: "User Status"
       cart:
         type: array
         items:
