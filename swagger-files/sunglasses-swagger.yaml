@@ -28,22 +28,22 @@ paths:
           description: Unexpected error
           schema:
             $ref: "#/definitions/Error"
-  /brands/{id}/products:
+  /brands/{brandId}/products:
     get:
       summary: Products of a given brand
       description: >-
         This endpoint takes the id of a brand and returns all of it's corresponding products.
       parameters:
-        - name: id
+        - name: brandId
           in: path
-          description: The id of a brand to find it's corresponding products
+          description: The id of a brand
           required: true
           type: integer
       tags:
         - Brands
       responses:
         "200":
-          description: Profile information for a user
+          description: An array of products
           schema:
             type: array
             items:
@@ -56,12 +56,12 @@ paths:
     get:
       summary: Products
       description: |
-        This endpoint returns all products. You can also filter using query parameters.
+        This endpoint returns all products.
       tags:
         - Products
       responses:
         "200":
-          description: An array of products
+          description: An array of all products
           schema:
             type: array
             items:
